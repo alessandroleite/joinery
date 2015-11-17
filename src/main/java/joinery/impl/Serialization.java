@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.io.FileInputStream;
@@ -36,10 +35,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import joinery.DataFrame;
-import joinery.DataFrame.NumberDefault;
+import joinery.DataFrame.Function;
+import joinery.converters.DoubleConverter;
 
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -65,7 +66,7 @@ public class Serialization {
     private static final Object INDEX_KEY = new Object();
     private static final int    MAX_COLUMN_WIDTH = 20;
 
-    public static String toString(final DataFrame<?> df, final int limit) {
+    public static String toString(final DataFrame df, final int limit) {
         final int len = df.length();
 
         if (len == 0) {
@@ -204,41 +205,41 @@ public class Serialization {
         return s;
     }
 
-    public static DataFrame<Object> readCsv(final String file)
+    public static DataFrame readCsv(final String file)
     throws IOException {
         return readCsv(file.contains("://") ?
-                new URL(file).openStream() : new FileInputStream(file), ",", NumberDefault.LONG_DEFAULT, null);
+                new URL(file).openStream() : new FileInputStream(file), ",", new DoubleConverter(), null);
     }
 
-    public static DataFrame<Object> readCsv(final String file, final String separator, NumberDefault numDefault)
+    public static DataFrame readCsv(final String file, final String separator, Function<Object, ? extends Number> numDefault)
     throws IOException {
         return readCsv(file.contains("://") ?
                 new URL(file).openStream() : new FileInputStream(file), separator, numDefault, null);
     }
 
-    public static DataFrame<Object> readCsv(final String file, final String separator, NumberDefault numDefault, final String naString)
+    public static DataFrame readCsv(final String file, final String separator, Function<Object, ? extends Number> numDefault, final String naString)
     throws IOException {
         return readCsv(file.contains("://") ?
                 new URL(file).openStream() : new FileInputStream(file), separator, numDefault, naString);
     }
 
-    public static DataFrame<Object> readCsv(final String file, final String separator, NumberDefault numDefault, final String naString, boolean hasHeader)
+    public static DataFrame readCsv(final String file, final String separator, Function<Object, ? extends Number> numDefault, final String naString, boolean hasHeader)
     throws IOException {
         return readCsv(file.contains("://") ?
                 new URL(file).openStream() : new FileInputStream(file), separator, numDefault, naString, hasHeader);
     }
 
-    public static DataFrame<Object> readCsv(final InputStream input) 
+    public static DataFrame readCsv(final InputStream input) 
     throws IOException {
-        return readCsv(input, ",", NumberDefault.LONG_DEFAULT, null);
+        return readCsv(input, ",", new DoubleConverter(), null);
     }
 
-    public static DataFrame<Object> readCsv(final InputStream input, String separator, NumberDefault numDefault, String naString) 
+    public static DataFrame readCsv(final InputStream input, String separator, Function<Object, ? extends Number> numDefault, String naString) 
     throws IOException {
-    	return readCsv(input,separator, numDefault,naString, true);
+		return readCsv(input, separator, numDefault, naString, true);
     }
     
-    public static DataFrame<Object> readCsv(final InputStream input, String separator, NumberDefault numDefault, String naString, boolean hasHeader)
+    public static DataFrame readCsv(final InputStream input, String separator, Function<Object, ? extends Number> numDefault, String naString, boolean hasHeader)
     throws IOException {
         CsvPreference csvPreference;
         switch (separator) {
@@ -256,12 +257,12 @@ public class Serialization {
         }
         try (CsvListReader reader = new CsvListReader(new InputStreamReader(input), csvPreference)) {
         	final List<String> header;
-        	final DataFrame<Object> df;
+        	final DataFrame df;
         	final CellProcessor[] procs;
         	if(hasHeader) {
         		header = Arrays.asList(reader.getHeader(true));
         		procs = new CellProcessor[header.size()];
-                df = new DataFrame<>(header);
+                df = new DataFrame(header);
         	} else {
         		// Read the first row to figure out how many columns we have
         		reader.read();
@@ -270,7 +271,7 @@ public class Serialization {
 					header.add("V"+i);
 				}
         		procs = new CellProcessor[header.size()];
-        		df = new DataFrame<>(header);
+        		df = new DataFrame(header);
         		// The following line executes the procs on the previously read row again
         		df.append(reader.executeProcessors(procs));
         	}
@@ -281,12 +282,12 @@ public class Serialization {
         }
     }
 
-    public static <V> void writeCsv(final DataFrame<V> df, final String output)
+    public static <V> void writeCsv(final DataFrame df, final String output)
     throws IOException {
         writeCsv(df, new FileOutputStream(output));
     }
 
-    public static <V> void writeCsv(final DataFrame<V> df, final OutputStream output)
+    public static <V> void writeCsv(final DataFrame df, final OutputStream output)
     throws IOException {
         try (CsvListWriter writer = new CsvListWriter(new OutputStreamWriter(output), CsvPreference.STANDARD_PREFERENCE)) {
             final String[] header = new String[df.size()];
@@ -305,80 +306,88 @@ public class Serialization {
                     procs[c] = new ConvertNullTo("");
                 }
             }
-            for (final List<V> row : df) {
+            
+            for (final ListIterator<List<V>> iter = df.<V>iterator(); iter.hasNext(); ) {
+            	final List<V> row = iter.next();
                 writer.write(row, procs);
             }
         }
     }
 
-    public static DataFrame<Object> readXls(final String file)
+    public static DataFrame readXls(final String file)
     throws IOException {
         return readXls(file.contains("://") ?
                     new URL(file).openStream() : new FileInputStream(file));
     }
 
-    public static DataFrame<Object> readXls(final InputStream input)
+    public static DataFrame readXls(final InputStream input)
     throws IOException {
-        final Workbook wb = new HSSFWorkbook(input);
-        final Sheet sheet = wb.getSheetAt(0);
-        final List<Object> columns = new ArrayList<>();
-        final List<List<Object>> data = new ArrayList<>();
+    	
+        try(final Workbook wb = new HSSFWorkbook(input))
+        {
+        	final Sheet sheet = wb.getSheetAt(0);
+            final List<Object> columns = new ArrayList<>();
+            final List<List<Object>> data = new ArrayList<>();
 
-        for (final Row row : sheet) {
-            if (row.getRowNum() == 0) {
-                // read header
-                for (final Cell cell : row) {
-                    columns.add(readCell(cell));
+            for (final Row row : sheet) {
+                if (row.getRowNum() == 0) {
+                    // read header
+                    for (final Cell cell : row) {
+                        columns.add(readCell(cell));
+                    }
+                } else {
+                    // read data values
+                    final List<Object> values = new ArrayList<>();
+                    for (final Cell cell : row) {
+                        values.add(readCell(cell));
+                    }
+                    data.add(values);
                 }
-            } else {
-                // read data values
-                final List<Object> values = new ArrayList<>();
-                for (final Cell cell : row) {
-                    values.add(readCell(cell));
-                }
-                data.add(values);
             }
-        }
 
-        // create data frame
-        final DataFrame<Object> df = new DataFrame<>(columns);
-        for (final List<Object> row : data) {
-            df.append(row);
-        }
+            // create data frame
+            final DataFrame df = new DataFrame(columns);
+            for (final List<Object> row : data) {
+                df.append(row);
+            }
 
-        return df.convert();
+            return df.convert();
+        }
     }
 
-    public static <V> void writeXls(final DataFrame<V> df, final String output)
+    public static <V> void writeXls(final DataFrame df, final String output)
     throws IOException {
         writeXls(df, new FileOutputStream(output));
     }
 
-    public static <V> void writeXls(final DataFrame<V> df, final OutputStream output)
+    public static <V> void writeXls(final DataFrame df, final OutputStream output)
     throws IOException {
-        final Workbook wb = new HSSFWorkbook();
-        final Sheet sheet = wb.createSheet();
+    	
+        try(final Workbook wb = new HSSFWorkbook();)
+        {
+        	final Sheet sheet = wb.createSheet();
 
-        // add header
-        Row row = sheet.createRow(0);
-        final Iterator<Object> it = df.columns().iterator();
-        for (int c = 0; c < df.size(); c++) {
-            final Cell cell = row.createCell(c);
-            writeCell(cell, it.hasNext() ? it.next() : c);
-        }
-
-        // add data values
-        for (int r = 0; r < df.length(); r++) {
-            row = sheet.createRow(r + 1);
+            // add header
+            Row row = sheet.createRow(0);
+            final Iterator<Object> it = df.columns().iterator();
             for (int c = 0; c < df.size(); c++) {
                 final Cell cell = row.createCell(c);
-                writeCell(cell, df.get(r, c));
+                writeCell(cell, it.hasNext() ? it.next() : c);
             }
-        }
 
-        //  write to stream
-        wb.write(output);
-        output.close();
+            // add data values
+            for (int r = 0; r < df.length(); r++) {
+                row = sheet.createRow(r + 1);
+                for (int c = 0; c < df.size(); c++) {
+                    final Cell cell = row.createCell(c);
+                    writeCell(cell, df.get(r, c));
+                }
+            }
+
+            //  write to stream
+            wb.write(output);
+            output.close();
+        }
     }
 
     private static final Object readCell(final Cell cell) {

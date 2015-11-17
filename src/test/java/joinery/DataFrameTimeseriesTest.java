@@ -1,24 +1,22 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery;
 
-import static org.junit.Assert.assertArrayEquals;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -31,9 +29,11 @@ import joinery.DataFrame.Function;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
+
 public class DataFrameTimeseriesTest {
     private DateFormat fmt = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-    private DataFrame<Object> df;
+    private DataFrame df;
 
     @Before
     public void setUp()
@@ -68,7 +68,6 @@ public class DataFrameTimeseriesTest {
                     1.58, 0.62, 0.75, 0.89, -0.27
                 },
                 df.retain("Close")
-                  .cast(Number.class)
                   .diff()
                   .fillna(Double.NaN)
                   .toArray(double[].class),
@@ -84,7 +83,6 @@ public class DataFrameTimeseriesTest {
                     6.74, 5.06, 2.95, 2.26, 1.37
                 },
                 df.retain("Close")
-                  .cast(Number.class)
                   .diff(3)
                   .fillna(Double.NaN)
                   .toArray(double[].class),
@@ -100,7 +98,6 @@ public class DataFrameTimeseriesTest {
                     0.01265, 0.0049, 0.0059, 0.0070, -0.0021
                 },
                 df.retain("Close")
-                  .cast(Number.class)
                   .percentChange()
                   .fillna(Double.NaN)
                   .toArray(double[].class),

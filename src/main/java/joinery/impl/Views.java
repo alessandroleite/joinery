@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.util.AbstractList;
@@ -33,10 +32,10 @@ public class Views {
 
     public static class ListView<V>
     extends AbstractList<List<V>> {
-        private final DataFrame<V> df;
+        private final DataFrame df;
         private final boolean transpose;
 
-        public ListView(final DataFrame<V> df, final boolean transpose) {
+        public ListView(final DataFrame df, final boolean transpose) {
             this.df = df;
             this.transpose = transpose;
         }
@@ -54,19 +53,20 @@ public class Views {
 
     public static class SeriesListView<V>
     extends AbstractList<V> {
-        private final DataFrame<V> df;
+        private final DataFrame df;
         private final int index;
         private final boolean transpose;
 
-        public SeriesListView(final DataFrame<V> df, final int index, final boolean transpose) {
+        public SeriesListView(final DataFrame df, final int index, final boolean transpose) {
             this.df = df;
             this.index = index;
             this.transpose = transpose;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public V get(final int index) {
-            return transpose ? df.get(index, this.index) : df.get(this.index, index);
+            return (V) (transpose ? df.get(index, this.index) : df.get(this.index, index));
         }
 
         @Override
@@ -77,10 +77,10 @@ public class Views {
 
     public static class MapView<V>
     extends AbstractList<Map<Object, V>> {
-        private final DataFrame<V> df;
+        private final DataFrame df;
         private final boolean transpose;
 
-        public MapView(final DataFrame<V> df, final boolean transpose) {
+        public MapView(final DataFrame df, final boolean transpose) {
             this.df = df;
             this.transpose = transpose;
         }
@@ -98,11 +98,11 @@ public class Views {
 
     public static class SeriesMapView<V>
     extends AbstractMap<Object, V> {
-        private final DataFrame<V> df;
+        private final DataFrame df;
         private final int index;
         private final boolean transpose;
 
-        public SeriesMapView(final DataFrame<V> df, final int index, final boolean transpose) {
+        public SeriesMapView(final DataFrame df, final int index, final boolean transpose) {
             this.df = df;
             this.index = index;
             this.transpose = transpose;
@@ -134,11 +134,10 @@ public class Views {
                                     return key;
                                 }
 
+                                @SuppressWarnings("unchecked")
                                 @Override
                                 public V getValue() {
-                                    return transpose ?
-                                            df.get(value, index) :
-                                            df.get(index, value);
+                                    return (V) (transpose ? df.get(value, index) : df.get(index, value));
                                 }
 
                                 @Override
@@ -165,11 +164,11 @@ public class Views {
 
     public static class TransformedView<V, U>
     extends AbstractList<List<U>> {
-        protected final DataFrame<V> df;
+        protected final DataFrame df;
         protected final Function<V, U> transform;
         protected final boolean transpose;
 
-        public TransformedView(final DataFrame<V> df, final Function<V, U> transform, final boolean transpose) {
+        public TransformedView(final DataFrame df, final Function<V, U> transform, final boolean transpose) {
             this.df = df;
             this.transform = transform;
             this.transpose = transpose;
@@ -188,21 +187,22 @@ public class Views {
 
     public static class TransformedSeriesView<V, U>
     extends AbstractList<U> {
-        protected final DataFrame<V> df;
+        protected final DataFrame df;
         protected final int index;
         protected final boolean transpose;
         protected final Function<V, U> transform;
 
-        public TransformedSeriesView(final DataFrame<V> df, final Function<V, U> transform, final int index, final boolean transpose) {
+        public TransformedSeriesView(final DataFrame df, final Function<V, U> transform, final int index, final boolean transpose) {
             this.df = df;
             this.transform = transform;
             this.index = index;
             this.transpose = transpose;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public U get(final int index) {
-            final V value = transpose ? df.get(index, this.index) : df.get(this.index, index);
+            final V value = (V) (transpose ? df.get(index, this.index) : df.get(this.index, index));
             return transform.apply(value);
         }
 
@@ -214,15 +214,16 @@ public class Views {
 
     public static class FlatView<V>
     extends AbstractList<V> {
-        private final DataFrame<V> df;
+        private final DataFrame df;
 
-        public FlatView(final DataFrame<V> df) {
+        public FlatView(final DataFrame df) {
             this.df = df;
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public V get(final int index) {
-            return df.get(index % df.length(), index / df.length());
+            return (V) df.get(index % df.length(), index / df.length());
         }
 
         @Override

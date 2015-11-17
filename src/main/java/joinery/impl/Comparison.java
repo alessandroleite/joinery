@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.util.LinkedHashSet;
@@ -24,7 +23,7 @@ import java.util.Set;
 import joinery.DataFrame;
 
 public class Comparison {
-    public static final <V> DataFrame<String> compare(final DataFrame<V> df1, final DataFrame<V> df2) {
+    public static final <V> DataFrame compare(final DataFrame df1, final DataFrame df2) {
         // algorithm
         // 1. determine union of rows and columns
         final Set<Object> rows = new LinkedHashSet<>();
@@ -35,11 +34,11 @@ public class Comparison {
         cols.addAll(df2.columns());
 
         // 2. reshape left to contain all rows and columns
-        final DataFrame<V> left = df1.reshape(rows, cols);
+        final DataFrame left = df1.reshape(rows, cols);
         // 3. reshape right to contain all rows and columns
-        final DataFrame<V> right = df2.reshape(rows, cols);
+        final DataFrame right = df2.reshape(rows, cols);
 
-        final DataFrame<String> comp = new DataFrame<>(rows, cols);
+        final DataFrame comp = new DataFrame(rows, cols);
 
         // 4. perform comparison cell by cell
         for (int c = 0; c < left.size(); c++) {

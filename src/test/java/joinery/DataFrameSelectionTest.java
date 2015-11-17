@@ -1,25 +1,22 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,8 +29,10 @@ import joinery.DataFrame.Axis;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class DataFrameSelectionTest {
-    private DataFrame<Object> df;
+    private DataFrame df;
 
     @Before
     public void setUp()
@@ -51,7 +50,7 @@ public class DataFrameSelectionTest {
         data.add(names);
         data.add(values);
 
-        df = new DataFrame<>(rows, cols, data);
+        df = new DataFrame(rows, cols, data);
     }
 
     @Test
@@ -112,7 +111,7 @@ public class DataFrameSelectionTest {
 
     @Test
     public void testDropNaRows() {
-        df = new DataFrame<Object>()
+        df = new DataFrame()
                     .add("one", "two", "three")
                     .append(Arrays.asList("a", null, "c"))
                     .append(Arrays.asList("aa", "bb", "cc"));
@@ -124,7 +123,7 @@ public class DataFrameSelectionTest {
 
     @Test
     public void testDropNaColumns() {
-        df = new DataFrame<Object>()
+        df = new DataFrame()
                     .add("one", "two", "three")
                     .append(Arrays.asList("a", null, "c"))
                     .append(Arrays.asList("aa", "bb", "cc"));

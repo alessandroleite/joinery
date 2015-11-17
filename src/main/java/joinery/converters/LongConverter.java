@@ -15,16 +15,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package joinery;
+package joinery.converters;
 
+import joinery.DataFrame.Function;
 
-import joinery.doctest.DocTestSuite;
-import joinery.doctest.DocTestSuite.DocTestSourceDirectory;
+public class LongConverter implements Function<Object, Long> {
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(DocTestSuite.class)
-@DocTestSourceDirectory("src/main/java")
-@SuiteClasses({DataFrame.class})
-public class DataFrameDocTest { }
+	@Override
+	public Long apply(final Object value) {
+		try {
+			return new Long(String.valueOf(value));
+		} catch (final NumberFormatException ignored) {
+		}
+		return null;
+	}
+}

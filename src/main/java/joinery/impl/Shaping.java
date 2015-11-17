@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.util.Collection;
@@ -25,8 +24,8 @@ import java.util.Iterator;
 import joinery.DataFrame;
 
 public class Shaping {
-    public static final <V> DataFrame<V> reshape(final DataFrame<V> df, final int rows, final int cols) {
-        final DataFrame<V> reshaped = new DataFrame<>();
+    public static final <V> DataFrame reshape(final DataFrame df, final int rows, final int cols) {
+        final DataFrame reshaped = new DataFrame();
         Iterator<Object> it;
 
         it = df.columns().iterator();
@@ -52,8 +51,8 @@ public class Shaping {
         return reshaped;
     }
 
-    public static final <V> DataFrame<V> reshape(final DataFrame<V> df, final Collection<?> rows, final Collection<?> cols) {
-        final DataFrame<V> reshaped = new DataFrame<>();
+    public static final <V> DataFrame reshape(final DataFrame df, final Collection<?> rows, final Collection<?> cols) {
+        final DataFrame reshaped = new DataFrame();
 
         for (final Object name : cols) {
             reshaped.add(name);

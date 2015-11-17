@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,13 +32,15 @@ import joinery.DataFrame.JoinType;
 import joinery.DataFrame.KeyFunction;
 
 public class Combining {
-    public static <V> DataFrame<V> join(final DataFrame<V> left, final DataFrame<V> right, final JoinType how, final KeyFunction<V> on) {
+    public static <V> DataFrame join(final DataFrame left, final DataFrame right, final JoinType how, final KeyFunction<V> on) {
         final Iterator<Object> leftIt = left.index().iterator();
         final Iterator<Object> rightIt = right.index().iterator();
         final Map<Object, List<V>> leftMap = new LinkedHashMap<>();
         final Map<Object, List<V>> rightMap = new LinkedHashMap<>();
 
-        for (final List<V> row : left) {
+        
+        for (final ListIterator<List<V>> iter = left.<V>iterator(); iter.hasNext();) {
+        	final List<V> row = iter.next();
             final Object name = leftIt.next();
             final Object key = on == null ? name : on.apply(row);
             if (leftMap.put(key, row) != null) {
@@ -46,7 +48,8 @@ public class Combining {
             }
         }
 
-        for (final List<V> row : right) {
+        for (final ListIterator<List<V>> iter = right.<V>iterator(); iter.hasNext();) {
+        	final List<V> row = iter.next();
             final Object name = rightIt.next();
             final Object key = on == null ? name : on.apply(row);
             if (rightMap.put(key, row) != null) {
@@ -73,7 +76,7 @@ public class Combining {
             columns.add(column);
         }
 
-        final DataFrame<V> df = new DataFrame<>(columns);
+        final DataFrame df = new DataFrame(columns);
         for (final Map.Entry<Object, List<V>> entry : how != JoinType.RIGHT ? leftMap.entrySet() : rightMap.entrySet()) {
             final List<V> tmp = new ArrayList<>(entry.getValue());
             final List<V> row = how != JoinType.RIGHT ? rightMap.get(entry.getKey()) : leftMap.get(entry.getKey());
@@ -98,7 +101,7 @@ public class Combining {
         return df;
     }
 
-    public static <V> DataFrame<V> joinOn(final DataFrame<V> left, final DataFrame<V> right, final JoinType how, final Integer ... cols) {
+    public static <V> DataFrame joinOn(final DataFrame left, final DataFrame right, final JoinType how, final Integer ... cols) {
         return join(left, right, how, new KeyFunction<V>() {
             @Override
             public Object apply(final List<V> value) {
@@ -111,7 +114,7 @@ public class Combining {
         });
     }
 
-    public static <V> DataFrame<V> merge(final DataFrame<V> left, final DataFrame<V> right, final JoinType how) {
+    public static <V> DataFrame merge(final DataFrame left, final DataFrame right, final JoinType how) {
         final Set<Object> intersection = new LinkedHashSet<>(left.nonnumeric().columns());
         intersection.retainAll(right.nonnumeric().columns());
         final Object[] columns = intersection.toArray(new Object[intersection.size()]);
@@ -119,11 +122,11 @@ public class Combining {
     }
 
     @SafeVarargs
-    public static <V> void update(final DataFrame<V> dest,  final boolean overwrite, final DataFrame<? extends V> ... others) {
+    public static <V> void update(final DataFrame dest,  final boolean overwrite, final DataFrame ... others) {
         for (int col = 0; col < dest.size(); col++) {
             for (int row = 0; row < dest.length(); row++) {
                 if (overwrite || dest.get(row, col) == null) {
-                    for (final DataFrame<? extends V> other : others) {
+                    for (final DataFrame other : others) {
                         if (col < other.size() && row < other.length()) {
                             final V value = other.get(row, col);
                             if (value != null) {

@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.util.ArrayList;
@@ -28,8 +27,8 @@ import joinery.DataFrame;
 import joinery.DataFrame.SortDirection;
 
 public class Sorting {
-    public static <V> DataFrame<V> sort(
-            final DataFrame<V> df, final Map<Integer, SortDirection> cols) {
+    public static <V> DataFrame sort(
+            final DataFrame df, final Map<Integer, SortDirection> cols) {
         final Comparator<List<V>> comparator = new Comparator<List<V>>() {
             @Override
             @SuppressWarnings("unchecked")
@@ -51,13 +50,13 @@ public class Sorting {
         return sort(df, comparator);
     }
 
-    public static <V> DataFrame<V> sort(
-            final DataFrame<V> df, final Comparator<List<V>> comparator) {
-        final DataFrame<V> sorted = new DataFrame<V>(df.columns());
+    public static <V> DataFrame sort(
+            final DataFrame df, final Comparator<List<V>> comparator) {
+        final DataFrame sorted = new DataFrame(df.columns());
         final Comparator<Integer> cmp = new Comparator<Integer>() {
             @Override
             public int compare(final Integer r1, final Integer r2) {
-                return comparator.compare(df.row(r1),  df.row(r2));
+				return comparator.compare(df.<V> row(r1), df.<V> row(r2));
             }
         };
 

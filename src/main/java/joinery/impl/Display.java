@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.awt.Color;
@@ -49,9 +48,9 @@ import com.xeiam.xchart.StyleManager.ChartType;
 import com.xeiam.xchart.XChartPanel;
 
 public class Display {
-    public static <V> void plot(final DataFrame<V> df, final PlotType type) {
+    public static <V> void plot(final DataFrame df, final PlotType type) {
         final List<XChartPanel> panels = new LinkedList<>();
-        final DataFrame<Number> numeric = df.numeric().fillna(0);
+        final DataFrame numeric = df.numeric().fillna(0);
         final int rows = (int)Math.ceil(Math.sqrt(numeric.size()));
         final int cols = numeric.size() / rows + 1;
 
@@ -76,7 +75,7 @@ public class Display {
                     .height(800 / cols)
                     .title(String.valueOf(col))
                     .build();
-                final Series series = chart.addSeries(String.valueOf(col), xdata, numeric.col(col));
+				final Series series = chart.addSeries(String.valueOf(col), xdata, numeric.<Number> col(col));
                 if (type == PlotType.GRID_WITH_TREND) {
                     addTrend(chart, series, xdata);
                     series.setLineStyle(SeriesLineStyle.NONE);
@@ -97,7 +96,7 @@ public class Display {
             }
 
             for (final Object col : numeric.columns()) {
-                final Series series = chart.addSeries(String.valueOf(col), xdata, numeric.col(col));
+                final Series series = chart.addSeries(String.valueOf(col), xdata, numeric.<Number>col(col));
                 if (type == PlotType.SCATTER_WITH_TREND) {
                     addTrend(chart, series, xdata);
                     series.setLineStyle(SeriesLineStyle.NONE);
@@ -124,7 +123,7 @@ public class Display {
         });
     }
 
-    public static <V> void show(final DataFrame<V> df) {
+    public static <V> void show(final DataFrame df) {
         final List<Object> columns = new ArrayList<>(df.columns());
         final List<Class<?>> types = df.types();
         SwingUtilities.invokeLater(new Runnable() {
@@ -183,7 +182,7 @@ public class Display {
         }
     }
 
-    private static final String title(final DataFrame<?> df) {
+    private static final String title(final DataFrame df) {
         return String.format(
                 "%s (%d rows x %d columns)",
                 df.getClass().getCanonicalName(),

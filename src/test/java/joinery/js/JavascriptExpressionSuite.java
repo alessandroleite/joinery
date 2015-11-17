@@ -1,3 +1,20 @@
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package joinery.js;
 
 import java.io.ByteArrayInputStream;
@@ -68,8 +85,8 @@ extends Suite {
                             System.setIn(new ByteArrayInputStream(
                                 String.format("tmp = frames[0]; df = frames[1]; %s;", expr).getBytes()));
                             try {
-                                final DataFrame<Object> df = DataFrame.readCsv(ClassLoader.getSystemResourceAsStream("grouping.csv"));
-                                final Object result = Shell.repl(Arrays.asList(new DataFrame<>(), df));
+                                final DataFrame df = DataFrame.readCsv(ClassLoader.getSystemResourceAsStream("grouping.csv"));
+                                final Object result = Shell.repl(Arrays.asList(new DataFrame(), df));
                                 if (result instanceof WrappedException) {
                                     throw WrappedException.class.cast(result).getWrappedException();
                                 } else if (result instanceof Throwable) {

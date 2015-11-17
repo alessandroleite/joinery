@@ -1,24 +1,22 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery;
 
-import static org.junit.Assert.assertArrayEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,12 +24,14 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
+
 public class DataFrameBasicTest {
-    private DataFrame<Object> df;
+    private DataFrame df;
 
     @Before
     public final void setUp() {
-        df = new DataFrame<Object>(
+        df = new DataFrame(
                 Arrays.<Object>asList("row1", "row2", "row3"),
                 Arrays.<Object>asList("category", "name", "value"),
                 Arrays.<List<Object>>asList(
@@ -44,7 +44,7 @@ public class DataFrameBasicTest {
 
     @Test(expected=IllegalArgumentException.class)
     public final void testDuplicateColumnsInConstructor() {
-        new DataFrame<String>(Arrays.<Object>asList("test", "test"));
+        new DataFrame(Arrays.<Object>asList("test", "test"));
     }
 
     @Test

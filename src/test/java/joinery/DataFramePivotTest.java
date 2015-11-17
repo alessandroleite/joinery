@@ -1,24 +1,22 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery;
 
-import static org.junit.Assert.assertArrayEquals;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -26,9 +24,11 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
+
 public class DataFramePivotTest {
     final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-    private DataFrame<Object> df;
+    private DataFrame df;
 
     @Before
     public void setUp()
@@ -39,7 +39,7 @@ public class DataFramePivotTest {
     @Test
     public void testBasicPivot()
     throws Exception {
-        final DataFrame<Object> pivot = df.pivot("date", "category", "value1");
+        final DataFrame pivot = df.pivot("date", "category", "value1");
         assertArrayEquals(
                 pivot.index().toArray(),
                 new Object[] {
@@ -72,7 +72,7 @@ public class DataFramePivotTest {
     @Test
     public void testMultipleValues()
     throws Exception {
-        final DataFrame<Object> pivot = df.pivot("date", "category", "value1", "value2");
+        final DataFrame pivot = df.pivot("date", "category", "value1", "value2");
         assertArrayEquals(
                 pivot.index().toArray(),
                 new Object[] {

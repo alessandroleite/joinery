@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ implements Iterable<Map.Entry<Object, SparseBitSet>> {
 
     public Grouping() { }
 
-    public <V> Grouping(final DataFrame<V> df, final KeyFunction<V> function, final Integer ... columns) {
+    public <V> Grouping(final DataFrame df, final KeyFunction<V> function, final Integer ... columns) {
         final Iterator<List<V>> iter = df.iterator();
         for (int r = 0; iter.hasNext(); r++) {
             final List<V> row = iter.next();
@@ -59,7 +58,7 @@ implements Iterable<Map.Entry<Object, SparseBitSet>> {
         }
     }
 
-    public <V> Grouping(final DataFrame<V> df, final Integer ... columns) {
+    public <V> Grouping(final DataFrame df, final Integer ... columns) {
         this(
             df,
             columns.length == 1 ?
@@ -85,7 +84,7 @@ implements Iterable<Map.Entry<Object, SparseBitSet>> {
     }
 
     @SuppressWarnings("unchecked")
-    public <V> DataFrame<V> apply(final DataFrame<V> df, final Function<?, ?> function) {
+    public <V> DataFrame apply(final DataFrame df, final Function<?, ?> function) {
         if (df.isEmpty()) {
             return df;
         }
@@ -109,12 +108,12 @@ implements Iterable<Map.Entry<Object, SparseBitSet>> {
                 for (final Map.Entry<Object, SparseBitSet> entry : groups.entrySet()) {
                     final SparseBitSet rows = entry.getValue();
                     final int r = rows.nextSetBit(0);
-                    column.add(df.get(r, c));
+                    column.add(df.<V>get(r, c));
                 }
                 grouped.add(column);
                 newcols.add(names.get(c));
             } else {
-                grouped.add(df.col(c));
+                grouped.add(df.<V>col(c));
                 newcols.add(names.get(c));
             }
         }
@@ -144,7 +143,7 @@ implements Iterable<Map.Entry<Object, SparseBitSet>> {
                             if (function instanceof Aggregate) {
                                 final List<V> values = new ArrayList<>(rows.cardinality());
                                 for (int r = rows.nextSetBit(0); r >= 0; r = rows.nextSetBit(r + 1)) {
-                                    values.add(df.get(r, c));
+                                    values.add(df.<V>get(r, c));
                                 }
                                 column.add((V)Aggregate.class.cast(function).apply(values));
                             } else {
@@ -174,7 +173,7 @@ implements Iterable<Map.Entry<Object, SparseBitSet>> {
                 );
         }
 
-        return new DataFrame<>(index, newcols, grouped);
+        return new DataFrame(index, newcols, grouped);
     }
 
     public Set<Object> keys() {

@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl.js;
 
 import java.io.IOException;
@@ -65,18 +64,18 @@ public class DataFrameAdapter
 extends ScriptableObject {
 
     private static final long serialVersionUID = 1L;
-    private final DataFrame<Object> df;
-    private static final DataFrame<Object> EMPTY_DF = new DataFrame<>();
+    private final DataFrame df;
+    private static final DataFrame EMPTY_DF = new DataFrame();
 
     public DataFrameAdapter() {
         this.df = EMPTY_DF;
     }
 
-    public DataFrameAdapter(final DataFrame<Object> df) {
+    public DataFrameAdapter(final DataFrame df) {
         this.df = df;
     }
 
-    public DataFrameAdapter(final Scriptable scope, final DataFrame<Object> df) {
+    public DataFrameAdapter(final Scriptable scope, final DataFrame df) {
         this.df = df;
         setParentScope(scope.getParentScope());
         setPrototype(scope.getPrototype());
@@ -91,19 +90,19 @@ extends ScriptableObject {
                 data.add(asList(array.get((int)ids[i], null)));
             }
             return new DataFrameAdapter(
-                    new DataFrame<Object>(
+                    new DataFrame(
                             asList(args[0]),
                             asList(args[1]),
                             data
                         )
                 );
         } else if (args.length == 2 && args[0] instanceof NativeArray) {
-            return new DataFrameAdapter(new DataFrame<Object>(
+            return new DataFrameAdapter(new DataFrame(
                     asList(args[0]),
                     asList(args[1])
                 ));
         } else if (args.length == 1 && args[0] instanceof NativeArray) {
-            return new DataFrameAdapter(new DataFrame<Object>(
+            return new DataFrameAdapter(new DataFrame(
                     asList(args[0])
                 ));
         } else if (args.length > 0) {
@@ -111,9 +110,9 @@ extends ScriptableObject {
             for (int i = 0; i < args.length; i++) {
                 columns[i] = Context.toString(args[i]);
             }
-            return new DataFrameAdapter(new DataFrame<>(columns));
+            return new DataFrameAdapter(new DataFrame(columns));
         }
-        return new DataFrameAdapter(new DataFrame<>());
+        return new DataFrameAdapter(new DataFrame());
     }
 
     private static DataFrameAdapter cast(final Scriptable object) {
@@ -169,7 +168,7 @@ extends ScriptableObject {
     }
 
     public static Scriptable jsFunction_join(final Context ctx, final Scriptable object, final Object[] args, final Function func) {
-        final DataFrame<Object> other = DataFrameAdapter.class.cast(args[0]).df;
+        final DataFrame other = DataFrameAdapter.class.cast(args[0]).df;
         final JoinType type = args.length > 1 && args[1] instanceof NativeJavaObject ?
                 JoinType.class.cast(Context.jsToJava(args[1], JoinType.class)) : null;
         if (args.length > 1 && args[args.length - 1] instanceof Function) {
@@ -187,7 +186,7 @@ extends ScriptableObject {
     }
 
     public static Scriptable jsFunction_joinOn(final Context ctx, final Scriptable object, final Object[] args, final Function func) {
-        final DataFrame<Object> other = DataFrameAdapter.class.cast(args[0]).df;
+        final DataFrame other = DataFrameAdapter.class.cast(args[0]).df;
         final JoinType type = args.length > 1 && args[1] instanceof NativeJavaObject ?
                 JoinType.class.cast(Context.jsToJava(args[1], JoinType.class)) : null;
         if (type != null) {
@@ -197,7 +196,7 @@ extends ScriptableObject {
     }
 
     public static Scriptable jsFunction_merge(final Context ctx, final Scriptable object, final Object[] args, final Function func) {
-        final DataFrame<Object> other = DataFrameAdapter.class.cast(args[0]).df;
+        final DataFrame other = DataFrameAdapter.class.cast(args[0]).df;
         final JoinType type = args.length > 1 && args[1] instanceof NativeJavaObject ?
                 JoinType.class.cast(Context.jsToJava(args[1], JoinType.class)) : null;
         if (type != null) {
@@ -207,7 +206,7 @@ extends ScriptableObject {
     }
 
     public static Scriptable jsFunction_update(final Context ctx, final Scriptable object, final Object[] args, final Function func) {
-        final DataFrame<?>[] others = new DataFrame[args.length];
+        final DataFrame[] others = new DataFrame[args.length];
         for (int i = 0; i < args.length; i++) {
             others[i] = DataFrameAdapter.class.cast(args[i]).df;
         }
@@ -215,7 +214,7 @@ extends ScriptableObject {
     }
 
     public static Scriptable jsFunction_coalesce(final Context ctx, final Scriptable object, final Object[] args, final Function func) {
-        final DataFrame<?>[] others = new DataFrame[args.length];
+        final DataFrame[] others = new DataFrame[args.length];
         for (int i = 0; i < args.length; i++) {
             others[i] = DataFrameAdapter.class.cast(args[i]).df;
         }
@@ -318,11 +317,11 @@ extends ScriptableObject {
     }
 
     public DataFrameAdapter jsFunction_isnull() {
-        return new DataFrameAdapter(this, df.isnull().cast(Object.class));
+        return new DataFrameAdapter(this, df.isnull());
     }
 
     public DataFrameAdapter jsFunction_notnull() {
-        return new DataFrameAdapter(this, df.notnull().cast(Object.class));
+        return new DataFrameAdapter(this, df.notnull());
     }
 
     public static Scriptable jsFunction_groupBy(final Context ctx, final Scriptable object, final Object[] args, final Function func) {
@@ -341,7 +340,7 @@ extends ScriptableObject {
         return df.groups();
     }
 
-    public Map<Object, DataFrame<Object>> jsFunction_explode() {
+    public Map<Object, DataFrame> jsFunction_explode() {
         return df.explode();
     }
 
@@ -438,7 +437,7 @@ extends ScriptableObject {
     }
 
     public DataFrameAdapter jsFunction_numeric() {
-        return new DataFrameAdapter(this, df.numeric().cast(Object.class));
+        return new DataFrameAdapter(this, df.numeric());
     }
 
     public DataFrameAdapter jsFunction_nonnumeric() {
@@ -487,7 +486,7 @@ extends ScriptableObject {
     public static Scriptable jsStaticFunction_readCsv(final Context ctx, final Scriptable object, final Object[] args, final Function func)
     throws IOException {
         final String file = Context.toString(args[0]);
-        final DataFrame<Object> df = DataFrame.readCsv(file);
+        final DataFrame df = DataFrame.readCsv(file);
         return new DataFrameAdapter(ctx.newObject(object, df.getClass().getSimpleName()), df);
     }
 
@@ -499,7 +498,7 @@ extends ScriptableObject {
     public static Scriptable jsStaticFunction_readXls(final Context ctx, final Scriptable object, final Object[] args, final Function func)
     throws IOException {
         final String file = Context.toString(args[0]);
-        final DataFrame<Object> df = DataFrame.readXls(file);
+        final DataFrame df = DataFrame.readXls(file);
         return new DataFrameAdapter(ctx.newObject(object, df.getClass().getSimpleName()), df);
     }
 

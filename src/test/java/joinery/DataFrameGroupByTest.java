@@ -1,25 +1,22 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,8 +29,10 @@ import joinery.DataFrame.KeyFunction;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class DataFrameGroupByTest {
-    private DataFrame<Object> df;
+    private DataFrame df;
 
     @Before
     public final void setUp()
@@ -43,10 +42,10 @@ public class DataFrameGroupByTest {
 
     @Test
     public final void testGroupBy() {
-        final DataFrame<Object> df = new DataFrame<>();
+        final DataFrame df = new DataFrame();
         df.add("name", Arrays.<Object>asList("one", "two", "three", "four", "one", "two"));
         df.add("value", Arrays.<Object>asList(1, 2, 3, 4, 5, 6));
-        final DataFrame<Object> grouped = df.groupBy(0).count();
+        final DataFrame grouped = df.groupBy(0).count();
         assertEquals(
                 "group by result has correct number of rows",
                 4,
@@ -66,7 +65,7 @@ public class DataFrameGroupByTest {
 
     @Test(expected=IllegalArgumentException.class)
     public final void testGroupByInvalid() {
-        new DataFrame<String>()
+        new DataFrame()
             .add("name", Arrays.<String>asList("one", "two", "three", "four", "one", "two"))
             .add("value", Arrays.<String>asList("1", "2", "3", "4", "1", "6"))
             .groupBy(0)
@@ -75,7 +74,7 @@ public class DataFrameGroupByTest {
 
     @Test
     public final void testGroupByMultiple() {
-        final DataFrame<Object> df = new DataFrame<>();
+        final DataFrame df = new DataFrame();
         df.add("name", Arrays.<Object>asList("one", "two", "three", "four", "one", "two"));
         df.add("category", Arrays.<Object>asList("alpha", "beta", "alpha", "beta", "alpha", "beta"));
         df.add("value", Arrays.<Object>asList(1, 2, 3, 4, 5, 6));
@@ -96,7 +95,7 @@ public class DataFrameGroupByTest {
 
     @Test
     public void testGroups() {
-        final Map<Object, DataFrame<Object>> groups =
+        final Map<Object, DataFrame> groups =
                 df.groupBy("b").explode();
 
         assertArrayEquals(

@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.io.BufferedReader;
@@ -41,12 +40,12 @@ import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrappedException;
 
 public class Shell {
-    public static Object repl(final List<DataFrame<Object>> frames)
+    public static Object repl(final List<DataFrame> frames)
     throws IOException {
         return repl(System.in, frames);
     }
 
-    public static Object repl(final InputStream input, final List<DataFrame<Object>> frames)
+    public static Object repl(final InputStream input, final List<DataFrame> frames)
     throws IOException {
         return new Repl(input, frames).run();
     }
@@ -61,12 +60,12 @@ public class Shell {
         private final String NEWLINE = System.getProperty("line.separator");
 
         private final InputStream input;
-        private final List<DataFrame<Object>> frames;
+        private final List<DataFrame> frames;
         private final boolean interactive = System.console() != null;
         private transient boolean quit = false;
         private transient int statement = 1;
 
-        private Repl(final InputStream input, final List<DataFrame<Object>> frames) {
+        private Repl(final InputStream input, final List<DataFrame> frames) {
             this.input = input;
             this.frames = frames;
         }
@@ -116,7 +115,7 @@ public class Shell {
                 // make argument frames available
                 final DataFrameAdapter[] array = new DataFrameAdapter[frames.size()];
                 for (int i = 0; i < frames.size(); i++) {
-                    final DataFrame<Object> df = frames.get(i);
+                    final DataFrame df = frames.get(i);
                     array[i] = new DataFrameAdapter(ctx.newObject(this, df.getClass().getSimpleName()), df);
                 }
                 put("frames", this, new NativeJavaArray(this, array));

@@ -1,25 +1,21 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -33,13 +29,15 @@ import joinery.impl.Conversion;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class DataFrameConversionTest {
-    private DataFrame<Object> df;
+    private DataFrame df;
 
     @Before
     public void setUp()
     throws Exception {
-        df = new DataFrame<>(
+        df = new DataFrame(
                 Arrays.<Object>asList("row1", "row2", "row3", "row4", "row5", "row6"),
                 Arrays.<Object>asList("string", "long", "double", "date", "bool", "null"),
                 Arrays.<List<Object>>asList(
@@ -55,7 +53,6 @@ public class DataFrameConversionTest {
 
     @Test
     public void testCast() {
-        final DataFrame<String> strings = df.cast(String.class);
         assertArrayEquals(
                 new String[] {
                         "one", "two", "three", "four", "five", "six",
@@ -65,15 +62,14 @@ public class DataFrameConversionTest {
                         "t", "true", "f", "false", "yes", "no",
                         null, null, null, null, null, null
                 },
-                strings.toArray()
+                df.toArray()
             );
     }
 
     @Test(expected=ClassCastException.class)
     public void testCastFails() {
-        final DataFrame<Date> dates = df.cast(Date.class);
         @SuppressWarnings("unused")
-        final Date dt = dates.get(0,  0);
+        final Date dt = df.get(0,  0);
     }
 
     @Test
@@ -103,7 +99,7 @@ public class DataFrameConversionTest {
 
     @Test(expected=ClassCastException.class)
     public void testConvertFails() {
-        final DataFrame<String> bad = new DataFrame<>(
+        final DataFrame bad = new DataFrame(
                 Arrays.<Object>asList("row1", "row2", "row3", "row4", "row5", "row6"),
                 Arrays.<Object>asList("string", "long", "double", "date"),
                 Arrays.<List<String>>asList(
@@ -120,7 +116,7 @@ public class DataFrameConversionTest {
 
     @Test
     public void testIsNull() {
-        final DataFrame<Boolean> nulls = df.isnull();
+        final DataFrame nulls = df.isnull();
         final Object[] expected = new Boolean[] {
             false, false, false, false, false, false,
             false, false, false, false, false, false,
@@ -137,7 +133,7 @@ public class DataFrameConversionTest {
 
     @Test
     public void testNotNull() {
-        final DataFrame<Boolean> nonnulls = df.notnull();
+        final DataFrame nonnulls = df.notnull();
         final Object[] expected = new Boolean[] {
             true,  true,  true,  true,  true,  true,
             true,  true,  true,  true,  true,  true,
@@ -233,11 +229,11 @@ public class DataFrameConversionTest {
 
     @Test
     public void testToModelMatrixWithIntercept() throws IOException {
-        DataFrame<Object> df = DataFrame.readCsv(ClassLoader.getSystemResourceAsStream("serialization.csv"));
+        DataFrame df = DataFrame.readCsv(ClassLoader.getSystemResourceAsStream("serialization.csv"));
         assertEquals(3, df.columns().size());
         System.out.println(df);
         //System.out.println(df.types());
-        DataFrame<Number> mm = Conversion.toModelMatrixDataFrame(df, null, true);
+        DataFrame mm = Conversion.toModelMatrixDataFrame(df, null, true);
         System.out.println(mm);
         // Intercept + {a,b,c}.size() + {alpha,bravo...}.size() + value
         int expectedColNos = 1+2+5+1;
@@ -310,11 +306,11 @@ public class DataFrameConversionTest {
 
     @Test
     public void testToModelMatrix() throws IOException {
-        DataFrame<Object> df = DataFrame.readCsv(ClassLoader.getSystemResourceAsStream("serialization.csv"));
+        DataFrame df = DataFrame.readCsv(ClassLoader.getSystemResourceAsStream("serialization.csv"));
         assertEquals(3, df.columns().size());
         //System.out.println(df);
         //System.out.println(df.types());
-        DataFrame<Number> mm = Conversion.toModelMatrixDataFrame(df, null, false);
+        DataFrame mm = Conversion.toModelMatrixDataFrame(df, null, false);
         //System.out.println(mm);
         // {a,b,c}.size() + {alpha,bravo...}.size() + value
         int expectedColNos = 2+5+1;

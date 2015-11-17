@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.util.ArrayList;
@@ -108,9 +107,13 @@ public class Index {
         }
         return indices;
     }
+    
+    public int size() {
+    	return this.index.size();
+    }
 
-    public static <V> DataFrame<V> reindex(final DataFrame<V> df, final Integer ... cols) {
-        return new DataFrame<V>(
+    public static <V> DataFrame reindex(final DataFrame df, final Integer ... cols) {
+        return new DataFrame(
                 df.transform(
                     cols.length == 1 ?
                         new RowFunction<V, Object>() {
@@ -143,13 +146,13 @@ public class Index {
             );
     }
 
-    public static <V> DataFrame<V> reset(final DataFrame<V> df) {
+    public static <V> DataFrame reset(final DataFrame df) {
         final List<Object> index = new ArrayList<>(df.length());
         for (int i = 0; i < df.length(); i++) {
             index.add(i);
         }
 
-        return new DataFrame<V>(
+        return new DataFrame(
                 index,
                 df.columns(),
                 new Views.ListView<V>(df, false)

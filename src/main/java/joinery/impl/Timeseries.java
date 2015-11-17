@@ -1,21 +1,20 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery.impl;
 
 import java.util.ArrayList;
@@ -26,19 +25,19 @@ import joinery.DataFrame;
 import joinery.DataFrame.Function;
 
 public class Timeseries {
-    public static <V> DataFrame<V> rollapply(final DataFrame<V> df, final Function<List<V>, V> function, final int period) {
+    public static <V> DataFrame rollapply(final DataFrame df, final Function<List<V>, V> function, final int period) {
         // can't use apply because rolling window functions are likely path dependent
         final List<List<V>> data = new ArrayList<>(df.size());
         final WindowFunction<V> f = new WindowFunction<>(function, period);
         for (int c = 0; c < df.size(); c++) {
             final List<V> column = new ArrayList<>(df.length());
             for (int r = 0; r < df.length(); r++) {
-                column.add(f.apply(df.get(r, c)));
+                column.add(f.apply(df.<V>get(r, c)));
             }
             data.add(column);
             f.reset();
         }
-        return new DataFrame<>(df.index(), df.columns(), data);
+        return new DataFrame(df.index(), df.columns(), data);
     }
 
     private static class WindowFunction<V>
@@ -94,18 +93,16 @@ public class Timeseries {
         }
     }
 
-    public static <V> DataFrame<V> diff(final DataFrame<V> df, final int period) {
-        final DataFrame<V> nonnumeric = df.nonnumeric();
-        @SuppressWarnings("unchecked")
-        final DataFrame<V> diff = (DataFrame<V>)df.numeric().apply(
+    public static <V> DataFrame diff(final DataFrame df, final int period) {
+        final DataFrame nonnumeric = df.nonnumeric();
+        final DataFrame diff = df.numeric().apply(
                 new WindowFunction<Number>(new DiscreteDifferenceFunction(), period));
         return nonnumeric.isEmpty() ? diff : nonnumeric.join(diff);
     }
 
-    public static <V> DataFrame<V> percentChange(final DataFrame<V> df, final int period) {
-        final DataFrame<V> nonnumeric = df.nonnumeric();
-        @SuppressWarnings("unchecked")
-        final DataFrame<V> diff = (DataFrame<V>)df.numeric().apply(
+    public static <V> DataFrame percentChange(final DataFrame df, final int period) {
+        final DataFrame nonnumeric = df.nonnumeric();
+        final DataFrame diff = df.numeric().apply(
                 new WindowFunction<Number>(new PercentChangeFunction(), period));
         return nonnumeric.isEmpty() ? diff : nonnumeric.join(diff);
     }

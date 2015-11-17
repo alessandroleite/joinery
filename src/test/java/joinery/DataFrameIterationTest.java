@@ -1,26 +1,22 @@
-/*
- * Joinery -- Data frames for Java
- * Copyright (c) 2014, 2015 IBM Corp.
+/**
+ *    Joinery - Data frames for Java
+ *    Copyright (c) 2014, 2015 IBM Corp.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package joinery;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -31,14 +27,16 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class DataFrameIterationTest {
-    private DataFrame<Object> empty;
-    private DataFrame<Object> df;
+    private DataFrame empty;
+    private DataFrame df;
 
     @Before
     public void setUp() {
-        empty = new DataFrame<>(Arrays.asList());
-        df = new DataFrame<>(
+        empty = new DataFrame(Arrays.asList());
+        df = new DataFrame(
                 Arrays.<Object>asList(),
                 Arrays.<Object>asList("name", "value"),
                 Arrays.asList(
@@ -51,7 +49,8 @@ public class DataFrameIterationTest {
     @Test
     public void testIter() {
         int i = 0;
-        for (final List<Object> row : df) {
+        for (ListIterator<List<Object>> iterator = df.iterator(); iterator.hasNext();) {
+        	final List<Object> row = iterator.next();
             assertEquals(i % 2 == 0 ? "alpha" : "beta", row.get(0));
             assertEquals(String.valueOf(i + 1), row.get(1));
             i++;
@@ -62,7 +61,8 @@ public class DataFrameIterationTest {
     @Test
     public void testItersEmpty() {
         int i = 0;
-        for (final List<Object> row : empty) {
+        for (ListIterator<List<Object>> ite = empty.iterator(); ite.hasNext();) {
+        	final List<Object> row = ite.next();
             fail(String.format("found row: %s!!!", row));
             i++;
         }
@@ -139,7 +139,7 @@ public class DataFrameIterationTest {
 
     @Test
     public void testTranspose() {
-        final DataFrame<Integer> df = new DataFrame<>(
+        final DataFrame df = new DataFrame(
                 Arrays.asList(
                         Arrays.<Integer>asList(1, 2),
                         Arrays.<Integer>asList(3, 4)

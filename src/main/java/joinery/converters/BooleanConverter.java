@@ -15,16 +15,21 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package joinery;
+package joinery.converters;
+
+import joinery.DataFrame.Function;
 
 
-import joinery.doctest.DocTestSuite;
-import joinery.doctest.DocTestSuite.DocTestSourceDirectory;
+public class BooleanConverter implements Function<Object, Boolean> {
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(DocTestSuite.class)
-@DocTestSourceDirectory("src/main/java")
-@SuiteClasses({DataFrame.class})
-public class DataFrameDocTest { }
+	@Override
+	public Boolean apply(final Object value) {
+		final String str = String.valueOf(value);
+		if (str.matches("t(r(u(e)?)?)?|y(e(s)?)?")) {
+			return new Boolean(true);
+		} else if (str.matches("f(a(l(s(e)?)?)?)?|n(o)?")) {
+			return new Boolean(false);
+		}
+		return null;
+	}
+}

@@ -15,16 +15,21 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package joinery;
+package joinery.converters;
+
+import joinery.DataFrame.Function;
 
 
-import joinery.doctest.DocTestSuite;
-import joinery.doctest.DocTestSuite.DocTestSourceDirectory;
+public class NAConverter<V> implements Function<V, V> {
+	
+	final String naString;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite.SuiteClasses;
+	public NAConverter(String naString) {
+		this.naString = naString;
+	}
 
-@RunWith(DocTestSuite.class)
-@DocTestSourceDirectory("src/main/java")
-@SuiteClasses({DataFrame.class})
-public class DataFrameDocTest { }
+	@Override
+	public V apply(V value) {
+		return naString != null && String.valueOf(value).equals(naString) ? null : value;
+	}
+}
